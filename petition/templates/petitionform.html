@@ -1,0 +1,20 @@
+{% extends "admin.html" %}
+
+{% block page_contents %}
+<form action="" method="post" enctype="multipart/form-data">
+  <table style="margin: auto;">
+    <tr><td></td><td><h1 style="text-align: left; margin-bottom: 8px; ">{{ page_title }}</h1></td></tr>
+    {% if errors %}<tr><td></td><td class="warning">{% include "formwarning.html" %}</td></tr>{% endif %}
+    <tr><td align="right"><label for="id_name" class="{{ name_error }}">Adresa:</label></td><td><span class="{{ name_error }}">http://{{ url_base }}/ </span><input type="text" name="name" value="{{ name }}" maxlength="30" id="id_name" class="{{ name_error }}" /><span class="{{ name_error }}"> (pouze znaky 'a'&ndash;'z', '0'&ndash;'9', '-' a '_')</span></td></tr>
+    <tr><td align="right"><label for="id_domain" class="{{ domain_error }}">Vlastní doména:</label></td><td><span class="{{ domain_error }}">http:// </span><input type="text" name="domain" value="{{ domain }}" maxlength="255" id="id_domain" class="{{ domain_error }}" /><span class="{{ domain_error }}"> (musí být nastavena v DNS)</span></td></tr>
+    <tr><td align="right"><label for="id_email" class="{{ email_error }}">E-mail pro pravidelné zprávy:</label></td><td><input type="text" name="email" value="{{ email }}" maxlength="75" id="id_email" class="{{ email_error }}" /><span class="{{ email_error }}"> (nepovinný)</span></td></tr>
+    <tr><td align="right"><label for="id_closed" class="{{ closed_error }}">Petice ukončena:</label></td><td><input type="checkbox" name="closed"{% if closed %} checked{% endif %} id="id_closed" class="{{ closed_error }}" /></td></tr>
+    <tr><td align="right"><label for="id_longname" class="{{ longname_error }}">Název petice:</label></td><td><input type="text" name="longname" value="{{ longname }}" maxlength="255" id="id_longname" class="{{ longname_error }}" style="width: 100%;" /></td></tr>
+    <tr><td align="right"><label for="id_keywords" class="{{ keywords_error }}">Klíčová slova:</label></td><td><input type="text" name="keywords" value="{{ keywords }}" maxlength="255" id="id_keywords" class="{{ keywords_error }}" style="width: 100%;" /></td></tr>
+    <tr><td align="right" valign="top"><label for="id_css" class="{{ css_error }}">Styly (CSS):</label></td><td><textarea name="css" rows="8" cols="" id="id_css" class="{{ css_error }}" style="width: 100%;">{{ css }}</textarea></td></tr>
+    <tr><td align="right" valign="top"><label for="id_text" class="{{ text_error }}">Text petice (HTML):</label></td><td><textarea name="text" rows="25" cols="" id="id_text" class="{{ text_error }}" style="width: 100%;">{{ text }}</textarea></td></tr>
+    <tr><td align="right"></td><td><input type="submit" name="submit" value="Odeslat" /><input type="hidden" name="id" value="{{ id }}" /></td></tr>
+  </table>
+  {% csrf_token %}
+</form>
+{% endblock %}

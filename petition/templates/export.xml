@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<signature_list>
+  <petition_name>{{ longname }}</petition_name>
+  {% spaceless %}		
+	<creation_timestamp>
+		<year>{{ timestamp.year }}</year>
+		<month>{{ timestamp.month }}</month>
+		<day>{{ timestamp.day }}</day>
+		<hour>{{ timestamp.hour }}</hour>
+		<minute>{{ timestamp.minute }}</minute>
+		<second>{{ timestamp.second }}</second>
+	</creation_timestamp>
+{% endspaceless %}
+  <signatures>
+{% for row in rows %}    {% spaceless %}		
+		<signature>
+				<name>{{ row.name }}</name>
+				<address>{{ row.address }}</address>
+				{% if row.occupation %}<occupation>{{ row.occupation }}</occupation>{% endif %}
+				{% if row.birthdate %}<birthdate>
+					<year>{{ row.birthdate.year }}</year>
+					<month>{{ row.birthdate.month }}</month>
+					<day>{{ row.birthdate.day }}</day>
+				</birthdate>{% endif %}
+				{% if row.email %}<email>{{ row.email }}</email>{% endif %}
+				{% if row.note %}<note>{{ row.note }}</note>{% endif %}
+				{% if row.timestamp %}<signature_timestamp>
+					<year>{{ row.timestamp.year }}</year>
+					<month>{{ row.timestamp.month }}</month>
+					<day>{{ row.timestamp.day }}</day>
+					<hour>{{ row.timestamp.hour }}</hour>
+					<minute>{{ row.timestamp.minute }}</minute>
+					<second>{{ row.timestamp.second }}</second>
+				</signature_timestamp>{% endif %}
+		</signature>
+{% endspaceless %}
+{% endfor %}  </signatures>
+</signature_list>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- XML Schema for petition V1.0 <http://petice.pecina.cz/> -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="petition">
+    <xs:complexType>
+      <xs:sequence>
+	<xs:element name="name" type="xs:token"/>
+	<xs:element ref="signatures"/>
+      </xs:sequence>
+      <xs:attribute name="version" use="required" type="xs:NMTOKEN" fixed="1.0"/>
+      <xs:attribute name="application" use="required" type="xs:NCName" fixed="petition"/>
+      <xs:attribute name="created" use="required" type="xs:dateTime"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="signatures">
+    <xs:complexType>
+      <xs:sequence>
+	<xs:element ref="signature" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="signature">
+    <xs:complexType>
+      <xs:sequence>
+	<xs:element name="name" type="xs:token"/>
+	<xs:element name="address" minOccurs="0">
+	  <xs:complexType>
+	    <xs:simpleContent>
+	      <xs:extension base="xs:token">
+		<xs:attribute ref="hidden"/>
+	      </xs:extension>
+	    </xs:simpleContent>
+	  </xs:complexType>
+	</xs:element>
+	<xs:element name="birthdate" minOccurs="0">
+	  <xs:complexType>
+	    <xs:simpleContent>
+	      <xs:extension base="xs:token">
+		<xs:attribute ref="hidden"/>
+	      </xs:extension>
+	    </xs:simpleContent>
+	  </xs:complexType>
+	</xs:element>
+	<xs:element name="occupation" minOccurs="0">
+	  <xs:complexType>
+	    <xs:simpleContent>
+	      <xs:extension base="xs:token">
+		<xs:attribute ref="hidden"/>
+	      </xs:extension>
+	    </xs:simpleContent>
+	  </xs:complexType>
+	</xs:element>
+	<xs:element name="email" minOccurs="0">
+	  <xs:complexType>
+	    <xs:simpleContent>
+	      <xs:extension base="xs:token">
+		<xs:attribute ref="hidden"/>
+	      </xs:extension>
+	    </xs:simpleContent>
+	  </xs:complexType>
+	</xs:element>
+	<xs:element name="note" minOccurs="0">
+	  <xs:complexType>
+	    <xs:simpleContent>
+	      <xs:extension base="xs:token">
+		<xs:attribute ref="hidden"/>
+	      </xs:extension>
+	    </xs:simpleContent>
+	  </xs:complexType>
+	</xs:element>
+	<xs:element name="timestamp" minOccurs="0">
+	  <xs:complexType>
+	    <xs:simpleContent>
+	      <xs:extension base="xs:dateTime">
+		<xs:attribute ref="hidden"/>
+	      </xs:extension>
+	    </xs:simpleContent>
+	  </xs:complexType>
+	</xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:attribute name="hidden" type="xs:boolean"/>
+</xs:schema>

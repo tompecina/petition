@@ -1,0 +1,16 @@
+%YAML 1.1
+---
+# petition
+name: {{ longname|safe }}
+timestamp: {{ timestamp }}
+---
+# signatures
+{% for row in rows %}-
+  name: {{ row.name|safe }}
+  occupation: {{ row.occupation|safe }}
+  address: {{ row.address|safe }}
+  birthdate: {{ row.birthdate }}
+  email: {{ row.email|safe }}
+  note:  {{ row.note|safe }}
+  timestamp: {{ row.timestamp }}
+{% endfor %}...

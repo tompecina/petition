@@ -1,0 +1,16 @@
+{% extends "admin.html" %}
+
+{% block page_contents %}
+<h1 style="margin: inherit auto;">{{ page_title }}</h1> 
+<table style="margin: 10px auto;"><tr><td><form action="/admin/doexport/{{ id }}/" method="get" enctype="multipart/form-data">
+<fieldset><legend>Zvolte výstupní formát</legend>
+{% for format in formats %}
+{% if format.newgroup %}<hr />{% endif %}<div style="padding: 3px 15px;"><input type="radio" name="format" value="{{ format.format }}"{% if forloop.first %} checked="checked"{% endif %} id="id_{{ format.format }}" /> <label for="id_{{ format.format }}">{{ format.desc }}</label></div>
+{% endfor %}
+</fieldset>
+<div style="padding: 10px 15px 3px;"><input type="checkbox" name="all" checked="checked" id="id_all" /> <label for="id_all">zahrnout i skryté údaje</label></div>
+<div style="padding: 3px 15px;"><input type="checkbox" name="header" checked="checked" id="id_header" /> <label for="id_header">v CSV souboru uvést názvy sloupců</label></div>
+<div style="padding: 3px 15px;"><input type="checkbox" name="semicol" id="id_semicol" /> <label for="id_semicol">v CSV souboru používat místo čárky středník</label></div>
+<div style="text-align: center; padding: 10px 15px;"><input type="submit" name="submit" value="Export" /></div>
+</form></td></tr></table>
+{% endblock %}

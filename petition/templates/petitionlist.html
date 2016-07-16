@@ -1,0 +1,17 @@
+{% extends "admin.html" %}
+
+{% block page_contents %}
+<h1>{{ page_title }}</h1> 
+{% if rows %}
+<table style="border-collapse: collapse; margin: auto;">
+<thead><tr class="header"><th>{% if superuser %}Uživatel{% else %}Číslo{% endif %}</th><th>Vytvořena</th><th>Adresa</th><th>Doména</th><th>Ukončena</th><th>Název</th><th>Podpisů</th><th>Akce</th></tr></thead>
+<tfoot><tr class="footer"><td colspan="8"><a href="/admin/petitionform">Nová petice</a></td></tr></tfoot>
+{% for row in rows %}
+<tr class="{{ row.class }}"><td style="text-align: center;">{% if superuser %}{{ row.user }}{% else %}{{ row.number }}{% endif %}</td><td>{{ row.timestamp }}</td><td><a href="/{{ row.name }}/">{{ row.name }}</a></td><td>{% if row.domain %}<a href="http://{{ row.domain }}/">{{ row.domain }}</a>{% endif %}</td><td style="text-align: center;">{{ row.closed }}</td><td style="width: 100%">{{ row.longname }}</td><td style="text-align: center;">{{ row.total }}</td><td><a href="/admin/petitiondetail/{{ row.id }}/">podrobnosti</a>&nbsp;&nbsp;<a href="/admin/petitionform/{{ row.id }}/">upravit</a>&nbsp;&nbsp;<a href="/admin/petitiondel/{{ row.id }}/">smazat</a>&nbsp;&nbsp;<a href="/admin/signaturelist/{{ row.id }}/">podpisy</a>&nbsp;&nbsp;<a href="/admin/export/{{ row.id }}/">export</a></td></tr>
+{% endfor %}
+</table>
+{% else %}
+<p style="text-align: center;">(nemáte zadány žádné petice)</p>
+<p style="text-align: center;"><a href="/admin/petitionform">Vytvořit novou petici</a></p>
+{% endif %}
+{% endblock %}

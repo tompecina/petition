@@ -1,0 +1,19 @@
+{% extends "admin.html" %}
+
+{% block page_contents %}
+<h1 style="text-align: center;">{{ page_title }}</h1> 
+<table id="detail" style="border-collapse: collapse; margin: auto;">
+<tr class="odd"><td style="text-align: right;">Interní identifikátor:</td><td>{{ id }}</td></tr>
+<tr class="even"><td style="text-align: right;">Čas vytvoření:</td><td>{{ timestamp }}</td></tr>
+<tr class="odd"><td style="text-align: right;">URL:</td><td><a href="http://{{ url_base }}/{{ name }}/">http://{{ url_base }}/{{ name }}/</a></td></tr>
+<tr class="even"><td style="text-align: right;">Vlastní doména:</td><td>{% if domain %}<a href="http://{{ domain }}/">http://{{ domain }}/</a>{% endif %}</td></tr>
+<tr class="odd"><td style="text-align: right;">E-mail pro zprávy:</td><td>{% if email %}<a href="mailto:{{ email }}">{{ email }}{% endif %}</a></td></tr>
+<tr class="even"><td style="text-align: right;">Ukončena:</td><td>{{ closed }}</td></tr>
+<tr class="odd"><td style="text-align: right;">Název:</td><td>{{ longname }}</td></tr>
+<tr class="even"><td style="text-align: right;">Klíčová slova:</td><td>{{ keywords }}</td></tr>
+<tr class="odd"><td style="text-align: right;">Styly (CSS):</td><td>{{ len_css }} znaků</td></tr>
+<tr class="even"><td style="text-align: right;">Text (HTML):</td><td>{{ len_text }} znaků</td></tr>
+<tr class="odd"><td style="text-align: right;">Počet podpisů:</td><td>{{ total }}</td></tr>
+<tr class="even"><td style="text-align: right;">Počet návštěvníků:</td><td>{{ counter }}</td></tr>
+</table>
+{% endblock %}

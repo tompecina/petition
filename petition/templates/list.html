@@ -1,0 +1,17 @@
+{% extends "main.html" %}
+
+{% block page_contents %}
+<h1 style="margin-bottom: 5px;">{{ petition_longname }}</h1> 
+<div class="res">{% if filter %}Filtr: <q>{{ filter }}</q>&nbsp;&nbsp;&bull;&nbsp;&nbsp;{% endif %}Počet {% if filter %}výsledků{% else %}podpisů{% endif %}: {{ total }}</div>
+<table class="big" style="margin: auto;">
+<thead><tr class="header"><th>{% if filter %}Číslo{% else %}Pořadí{% endif %}</th><th>Datum/čas</th><th>Jméno</th><th>Povolání</th><th>Narozen/a</th><th>Adresa</th><th style="white-space: nowrap;">E-mail</th><th style="width: 100%;">Poznámka</th></tr></thead>
+<tfoot><tr class="footer"><td colspan="4"><a href="{{ url }}">Zpět na petici</a></td><td colspan="4" style="text-align: right; font-weight: bold;">{{ nav|safe }}</td></tr>
+<tr><td colspan="8" style="padding-top: 5px;"><table class="inline" style="margin-left: auto;"><tr><td><form action="" method="get" enctype="multipart/form-data"><div><input type="submit" value="Filtr:" />&nbsp;<input type="text" name="filter" size="12" value="{{ filter }}" />{% if id %}<input type="hidden" name="id" value="{{ id }}" />{% endif %}</div></form></td>
+<td><form action="" method="get" enctype="multipart/form-data"><div><input type="submit" value="Zobrazit vše"{% if not filter %} disabled="disabled"{% endif %} />{% if id %}<input type="hidden" name="id" value="{{ id }}" />{% endif %}</div></form></td></tr></table></td></tr></tfoot>
+{% for row in rows %}
+<tr class="{{ row.class }}"><td style="text-align: center;">{{ row.number }}</td><td style="white-space: nowrap;">{{ row.timestamp }}</td><td style="white-space: nowrap;">{{ row.name }}</td><td>{% if not row.occupation_hidden %}{{ row.occupation }}{% endif %}</td><td>{% if not row.birthdate_hidden %}{{ row.birthdate }}{% endif %}</td><td>{% if not row.address_hidden %}{{ row.address }}{% endif %}</td><td>{% if not row.email_hidden %}{{ row.email }}{% endif %}</td><td>{% if not row.note_hidden %}{{ row.note }}{% endif %}</td></tr>
+{% empty %}
+<tr><td colspan="9" class="odd" style="font-style: italic; text-align: center;">(žádné výsledky)</td></tr>
+{% endfor %}
+</table>
+{% endblock %}

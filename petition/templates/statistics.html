@@ -1,0 +1,9 @@
+<fieldset><legend>Statistické údaje</legend>
+{% if total %}
+<p style="text-align: center;">Petici podepsalo celkem {{ total }} občanů</p>
+<p style="text-align: center; font-weight: bold;"><a href="/list/?id={{ id }}">Seznam všech signatářů</a></p>
+{% else %}
+<p  style="text-align: center;">Pod peticí zatím nejsou žádné podpisy</p>
+{% endif %}
+<p style="text-align: center; margin: 15px auto 10px;">Počet návštěvníků této stránky: {{ counter }}</p>
+</fieldset>

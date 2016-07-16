@@ -1,0 +1,24 @@
+{% extends "admin.html" %}
+
+{% block page_contents %}
+<h1 style="text-align: center;">{{ page_title }}</h1> 
+<table align="center" id="detail" style="border-collapse: collapse;">
+<tr class="odd"><td style="text-align: right;">Interní identifikátor:</td><td>{{ id }}</td></tr>
+<tr class="even"><td style="text-align: right;">Petice:</td><td>{{ petition_longname }}</td></tr>
+<tr class="odd"><td style="text-align: right;">Čas podpisu:</td><td>{{ timestamp }}</td></tr>
+<tr class="even"><td style="text-align: right;">Jméno:</td><td>{{ name }}</td></tr>
+<tr class="odd"><td style="text-align: right;">Povolání:</td><td>{{ occupation }}</td></tr>
+<tr class="even"><td style="text-align: right;">Skrýt povolání:</td><td>{{ occupation_hidden }}</td></tr>
+<tr class="odd"><td style="text-align: right;">Adresa:</td><td>{{ address }}</td></tr>
+<tr class="even"><td style="text-align: right;">Skrýt adresu:</td><td>{{ address_hidden }}</td></tr>
+<tr class="odd"><td style="text-align: right;">Datum narození:</td><td>{{ birthdate }}</td></tr>
+<tr class="even"><td style="text-align: right;">Skrýt datum narození:</td><td>{{ birthdate_hidden }}</td></tr>
+<tr class="odd"><td style="text-align: right;">E-mail:</td><td>{%if email %}<a href="mailto:{{ email }}">{{ email }}</a>{% endif %}</td></tr>
+<tr class="even"><td style="text-align: right;">Skrýt e-mail:</td><td>{{ email_hidden }}</td></tr>
+<tr class="odd"><td style="text-align: right;">Poznámka:</td><td>{{ note }}</td></tr>
+<tr class="even"><td style="text-align: right;">Skrýt poznámku:</td><td>{{ note_hidden }}</td></tr>
+<tr class="odd"><td style="text-align: right;">IP adresa:</td><td>{{ ip }}</td></tr>
+<tr class="even"><td style="text-align: right;">Doména:</td><td>{{ domain }}</td></tr>
+<tr class="odd"><td style="text-align: right;">Zpráva odeslána:</td><td>{{ reported }}</td></tr>
+</table>
+{% endblock %}

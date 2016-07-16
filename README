@@ -1,0 +1,23 @@
+================
+PETICE.PECINA.CZ
+================
+
+(C) 2011-16 Tomáš Pecina <tomas@pecina.cz>, GNU General Public License Version 3
+
+
+PETICE.PECINA.CZ je systém internetových petic v Pythonu/Djangu. Jedná se
+již o starší systém, který je udržován pouze v omezené míře.
+
+Pro instalaci musíte vytvořit soubor common/secrets.py, obsahujcí tyto dva
+řádky:
+
+DBPASSWD = <heslo k vaší databasi>
+SECKEY = <tajný klíč pro aplikaci>
+
+Rovněž budete pravděpodobně muset upravit soubor petition/wsgi.py, jehož obsah
+je závislý na konkrétních podmínkách instalace na vašem serveru, případně
+změnit nastavení v souboru petition/settings.py.
+
+Živá instalace aplikace je k disposici na adrese <https://petition.pecina.cz/>.
+Máte-li zájem o zřízení účtu na tomto serveru, napište si o něj autorovi na
+adresu Tomáš Pecina <tomas@pecina.cz>.

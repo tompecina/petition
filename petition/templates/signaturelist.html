@@ -1,0 +1,22 @@
+{% extends "admin.html" %}
+
+{% block page_contents %}
+<h1 style="margin-bottom: 0;">{{ page_title }}</h1> 
+<h2 style="margin-top: 2px; margin-bottom: 5px;">{{ petition_longname }}</h2>
+{% if rows %}
+<div class="res">Počet podpisů: {{ total }}</div>
+<form action="/admin/signaturedel/" method="post" enctype="multipart/form-data">
+<table class="big" style="margin: auto;">
+<thead><tr class="header"><th>Číslo</th><th>Datum/čas</th><th>Jméno</th><th>Adresa</th><th>Povolání</th><th>Narozen/a</th><th style="white-space: nowrap;">E-mail</th><th style="width: 100%">Poznámka</th><th>Smazat</th><th>Akce</th></tr></thead>
+<tfoot><tr class="footer"><td colspan="5"><a href="/admin/petitionlist/">Zpět na přehled petic</a></td><td colspan="5" style="text-align: right; font-weight: bold;">{{ nav|safe }}</td></tr>
+<tr><td colspan="11" style="padding-top: 5px;"><input type="submit" name="del" value="Smazat vybrané" /><input type="hidden" name="petition_id" value="{{ petition_id }}" /><input type="hidden" name="off" value="{{ off }}" /></td></tr></tfoot>
+{% for row in rows %}
+<tr class="{{ row.class }}"><td style="text-align: center;">{{ row.number }}</td><td style="white-space: nowrap;">{{ row.timestamp }}</td><td style="white-space: nowrap;">{{ row.name }}</td><td class="{% if row.address_hidden %}hidden{% endif %}">{{ row.address }}</td><td class="{% if row.occupation_hidden %}hidden{% endif %}">{{ row.occupation }}</td><td class="{% if row.birthdate_hidden %}hidden{% endif %}">{{ row.birthdate }}</td><td class="{% if row.email_hidden %}hidden{% endif %}">{{ row.email }}</td><td class="{% if row.note_hidden %}hidden{% endif %}">{{ row.note }}</td><td style="text-align: center;"><input type="checkbox" name="del{{ row.id }}" id="id_del{{ row.id }}" class="cb" /></td><td><a href="/admin/signaturedetail/{{ row.id }}/">podrobnosti</a></td></tr>
+{% endfor %}
+</table>
+{% csrf_token %}
+</form>
+{% else %}
+<p style="text-align: center;">Petici zatím nikdo nepodepsal.</p>
+{% endif %}
+{% endblock %}

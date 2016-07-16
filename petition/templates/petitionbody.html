@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- $Id: htmlquickstart.kmdr 768844 2008-01-30 19:21:23Z amantia $ -->
+<head>
+  <title>{{ page_title }}</title>
+  <meta name="GENERATOR" content="Quanta Plus" />
+  <meta name="AUTHOR" content="Tomáš Pecina" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Language" content="cs" />
+  <meta http-equiv="description" content="Petice" />
+  <meta name="Title" content="Petice" />
+  <meta name="Description" content="{{ longname }}" />
+  <meta name="Keywords" content="{{ keywords }}" />
+  <style type="text/css">
+  /* <![CDATA[ */
+  table#container { width: 100%; border-style: none; margin: 0; border-collapse: collapse; }
+  #container td { margin: 10px; padding: 10px 10px 10px 20px; }
+  #form table { border-collapse: collapse; }
+  #form td { padding: 0 0 5px 3px; vertical-align: middle; }
+  #form * { font-family: Verdana, "DejaVu Sans", sans-serif; font-size: 14px; color: #000040; }
+  #form fieldset { background-color: #f5f8ff; border-style: solid; border-width: 1px; border-color: #000040; margin: 0 0 12px 0;  padding: 2px 6px; }
+  #form legend { font-size: 12px; padding: 0 5px; margin: 5px; }
+  #form td.c1 { text-align: right; }
+  #form td.c3 { padding-right: 5px; width: 15px; }
+  #form input { width: 100%; color: #000000; }
+  #form p { margin-top: 5px; margin-bottom: 5px; }
+  #notes p { text-align: justify; padding: 4px 10px; }
+  #form a { color: #2551b7; text-decoration: none; }
+  #form a:hover { color: #e00000; }
+  #form div.warning { border-style: solid; border-width: 2px; padding: 4px 8px; text-align: center; margin: 10px 5px 5px 5px; background-color: #c4e0ff; }
+  #form p.foot { font-size: 11px; margin-top: 15px; }
+  #form p.foot a { font-size: inherit; }
+  #form label.err, #form span.err { color: #e00000; }
+  #form label.err { font-weight: bold; }
+  #form input.err, #form textarea.err { background: #ffecec; }
+  #form .ok { }
+{{ css|safe }}
+  /* ]]> */
+  </style>
+</head>
+<body>
+<table id="container">
+<tr><td valign="top" style="padding-right: 15px;" ><div id="petition">{{ text|safe }}</div></td>
+<td valign="top" style="width: 450px;">
+<div id="form">
+{% if display_form %}{% include 'signatureform.html' %}{% endif %}
+{% if display_thankyou %}{% include 'thankyou.html' %}{% endif %}
+{% if display_closed %}{% include 'closed.html' %}{% endif %}
+{% if display_stat %}{% include 'statistics.html' %}{% endif %}
+{% include 'notice.html' %}
+</div></td></tr></table>
+</body>
+</html>
