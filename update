@@ -1,6 +1,6 @@
 #!/bin/bash
 
-remote='petition.pecina.cz'
+remote='petice.pecina.cz'
 
 rsync -avhHzx \
       --exclude '.*' \
