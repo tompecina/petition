@@ -6,12 +6,14 @@ sys.path.append('/var/www/django/petition')
 __file__ = "/var/www/django/petition/venv-petition/bin/activate"
 
 old_os_path = os.environ['PATH']
-os.environ['PATH'] = os.path.dirname(os.path.abspath(__file__)) + os.pathsep + old_os_path
+os.environ['PATH'] = os.path.dirname(os.path.abspath(__file__)) + \
+                     os.pathsep + old_os_path
 base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if sys.platform == 'win32':
     site_packages = os.path.join(base, 'Lib', 'site-packages')
 else:
-    site_packages = os.path.join(base, 'lib', 'python%d.%d' % (sys.version_info.major, sys.version_info.minor), 'site-packages')
+    site_packages = os.path.join(base, 'lib', 'python%d.%d' % \
+        (sys.version_info.major, sys.version_info.minor), 'site-packages')
 prev_sys_path = list(sys.path)
 import site
 site.addsitedir(site_packages)

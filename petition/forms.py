@@ -25,15 +25,30 @@ from django import forms
 from petition.data.models import Petition, Signature
 
 class PetitionForm(forms.Form):
-    id = forms.IntegerField(widget=forms.HiddenInput, required=False)
-    name = forms.RegexField(max_length=30, regex=r'^[a-z][a-z0-9\-_]*$')
-    domain = forms.RegexField(max_length=255, regex=r'^[a-z0-9\-]+(\.[a-z0-9\-]+)*(:\d+)?$', required=False)
-    email = forms.EmailField(required=False)
-    closed = forms.BooleanField(required=False)
-    longname = forms.CharField(max_length=255)
-    keywords = forms.CharField(max_length=255, required=False)
-    css = forms.CharField(widget=forms.Textarea, required=False)
-    text = forms.CharField(widget=forms.Textarea)
+    id = forms.IntegerField(
+        widget=forms.HiddenInput,
+        required=False)
+    name = forms.RegexField(
+        max_length=30,
+        regex=r'^[a-z][a-z0-9\-_]*$')
+    domain = forms.RegexField(
+        max_length=255,
+        regex=r'^[a-z0-9\-]+(\.[a-z0-9\-]+)*(:\d+)?$',
+        required=False)
+    email = forms.EmailField(
+        required=False)
+    closed = forms.BooleanField(
+        required=False)
+    longname = forms.CharField(
+        max_length=255)
+    keywords = forms.CharField(
+        max_length=255,
+        required=False)
+    css = forms.CharField(
+        widget=forms.Textarea,
+        required=False)
+    text = forms.CharField(
+        widget=forms.Textarea)
 
     def clean_name(self):
         name = self.cleaned_data['name']
@@ -51,17 +66,32 @@ class PetitionForm(forms.Form):
         return domain
 
 class SignatureForm(forms.Form):
-    name = forms.CharField(max_length=30)
-    occupation = forms.CharField(max_length=255, required=False)
-    occupation_hidden = forms.BooleanField(required=False)
-    address = forms.CharField(max_length=255)
-    address_hidden = forms.BooleanField(required=False)
-    birthdate = forms.DateField(widget=forms.DateInput, required=False, input_formats=['%d.%m.%Y'])
-    birthdate_hidden = forms.BooleanField(required=False)
-    email = forms.EmailField(required=False)
-    email_hidden = forms.BooleanField(required=False)
-    note = forms.CharField(widget=forms.Textarea, required=False)
-    note_hidden = forms.BooleanField(required=False)
+    name = forms.CharField(
+        max_length=30)
+    occupation = forms.CharField(
+        max_length=255,
+        required=False)
+    occupation_hidden = forms.BooleanField(
+        required=False)
+    address = forms.CharField(
+        max_length=255)
+    address_hidden = forms.BooleanField(
+        required=False)
+    birthdate = forms.DateField(
+        widget=forms.DateInput,
+        required=False,
+        input_formats=['%d.%m.%Y'])
+    birthdate_hidden = forms.BooleanField(
+        required=False)
+    email = forms.EmailField(
+        required=False)
+    email_hidden = forms.BooleanField(
+        required=False)
+    note = forms.CharField(
+        widget=forms.Textarea,
+        required=False)
+    note_hidden = forms.BooleanField(
+        required=False)
 
     def clean_name(self):
         name = self.cleaned_data['name']

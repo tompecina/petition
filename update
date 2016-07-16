@@ -21,6 +21,6 @@ rsync -avhHzx \
       --exclude '/htmlcov/' \
       --exclude '#*' \
       --delete \
-      ./ $remote:/var/www/django/legal/
+      ./ $remote:/var/www/django/petition/
 
 ssh $remote 'touch /var/www/django/petition/petition/wsgi.py'

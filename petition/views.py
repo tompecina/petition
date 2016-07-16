@@ -21,7 +21,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, \
+                        HttpResponsePermanentRedirect, Http404
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
@@ -37,6 +38,16 @@ from datetime import datetime
 from socket import gethostbyaddr
 from bs4 import BeautifulSoup
 from xml.sax.saxutils import escape
+import reportlab.rl_config
+from reportlab.pdfbase.pdfmetrics import registerFont, registerFontFamily
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.platypus import Paragraph, SimpleDocTemplate, LongTable, \
+                               TableStyle
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.enums import TA_CENTER, TA_RIGHT
+from reportlab.lib.pagesizes import A4
+from io import BytesIO
+import os.path
 from petition.forms import PetitionForm, SignatureForm
 from petition.data.models import Petition, Signature
 
@@ -62,12 +73,28 @@ def oe(n):
 def norm(x, batch=BATCH):
     return (x // batch) * batch
 
-def gennav(off, total, prefix, suffix='',
-           batch=BATCH,
-           i0='&lt;&lt;', i1='&lt;', i2='&gt;', i3='&gt;&gt;',
-           a0='<a href="', a1='">', a2='</a>',
-           g0='<span class="grayed">', g1='</span>',
-           s0='', s1='&nbsp;&nbsp;', s2='&nbsp;&nbsp;<span class="pager">', s3='&nbsp;/&nbsp;', s4='</span>&nbsp;&nbsp;', s5='&nbsp;&nbsp;', s6=''):
+def gennav(
+        off,
+        total,
+        prefix,
+        suffix='',
+        batch=BATCH,
+        i0='&lt;&lt;',
+        i1='&lt;',
+        i2='&gt;',
+        i3='&gt;&gt;',
+        a0='<a href="',
+        a1='">',
+        a2='</a>',
+        g0='<span class="grayed">',
+        g1='</span>',
+        s0='',
+        s1='&nbsp;&nbsp;',
+        s2='&nbsp;&nbsp;<span class="pager">',
+        s3='&nbsp;/&nbsp;',
+        s4='</span>&nbsp;&nbsp;',
+        s5='&nbsp;&nbsp;',
+        s6=''):
     i = [i0, i1, i2, i3]
     n = [-1] * 4
     if off:
@@ -84,7 +111,8 @@ def gennav(off, total, prefix, suffix='',
             t[j] = g0 + i[j] + g1
         else:
             t[j] = a0 + prefix + str(n[j]) + suffix + a1 + i[j] + a2
-    return s0 + t[0] + s1 + t[1] + s2 + str(p1) + s3 + str(p2) + s4 + t[2] + s5 + t[3] + s6
+    return s0 + t[0] + s1 + t[1] + s2 + str(p1) + s3 + str(p2) + \
+        s4 + t[2] + s5 + t[3] + s6
 
 def error(request):
     var = {'page_title': 'Interní chyba aplikace', 'suppress_topline': True}
@@ -116,7 +144,9 @@ def xmlescape(t):
 
 def view(request, name=''):
     fields = ['longname', 'keywords', 'css', 'text', 'counter', 'closed']
-    sfields = ['name', 'address', 'address_hidden', 'occupation', 'occupation_hidden', 'birthdate', 'birthdate_hidden', 'email', 'email_hidden', 'note', 'note_hidden']
+    sfields = ['name', 'address', 'address_hidden', 'occupation',
+               'occupation_hidden', 'birthdate', 'birthdate_hidden', 'email',
+               'email_hidden', 'note', 'note_hidden']
     var = {'display_stat': True, 'display_thankyou': False, 'errors': False}
     if name:
         p = Petition.objects.filter(name=name)
@@ -137,7 +167,8 @@ def view(request, name=''):
         thankyou = request.GET.get('thankyou')
         if not thankyou:
             cursor = connection.cursor()
-            cursor.execute(('update data_petition set counter=counter+1 where id=%u' % p.id), [])
+            cursor.execute(('update data_petition set counter=counter+1 ' \
+                            'where id=%u' % p.id), [])
         for t in fields:
             var[t] = p.__getattribute__(t)
         closed = var['closed']
@@ -179,7 +210,8 @@ def view(request, name=''):
 def petitionform(request, id=0):
     u = request.user
     uid = u.id
-    fields = ['name', 'domain', 'email', 'closed', 'longname', 'keywords', 'css', 'text']
+    fields = ['name', 'domain', 'email', 'closed', 'longname', 'keywords',
+              'css', 'text']
     var = {'url_base': URL_BASE, 'errors': False}
     if request.method == 'GET':
         if id:
@@ -243,7 +275,9 @@ def petitionlist(request):
     u = request.user
     uid = u.id
     fields = ['id', 'user', 'name', 'domain', 'longname']
-    var = {'page_title': 'Přehled petic', 'superuser': u.is_superuser, 'rows': []}
+    var = {'page_title': 'Přehled petic',
+           'superuser': u.is_superuser,
+           'rows': []}
     if u.is_superuser:
         p = Petition.objects.all().order_by('timestamp')
     else:
@@ -266,7 +300,8 @@ def petitionlist(request):
 def petitiondetail(request, id=0):
     u = request.user
     uid = u.id
-    fields = ['id', 'name', 'domain', 'email', 'longname', 'keywords', 'counter']
+    fields = ['id', 'name', 'domain', 'email', 'longname', 'keywords',
+              'counter']
     var = {'url_base': URL_BASE, 'page_title': 'Podrobnosti o petici'}
     p = Petition.objects.filter(pk=id)
     if not p:
@@ -316,7 +351,9 @@ def petitiondel(request, id=0):
 def signaturelist(request, id=0, off=0):
     u = request.user
     uid = u.id
-    fields = ['id', 'name', 'occupation', 'occupation_hidden', 'birthdate_hidden', 'address', 'address_hidden', 'email', 'email_hidden', 'note', 'note_hidden']
+    fields = ['id', 'name', 'occupation', 'occupation_hidden',
+              'birthdate_hidden', 'address', 'address_hidden', 'email',
+              'email_hidden', 'note', 'note_hidden']
     var = {'page_title': 'Přehled podpisů', 'petition_id': id, 'rows': []}
     if off:
         off = int(off)
@@ -354,7 +391,8 @@ def signaturelist(request, id=0, off=0):
     return render(request, 'signaturelist.html', var)
 
 def slist(request):
-    fields = ['name', 'occupation', 'occupation_hidden', 'address', 'address_hidden', 'email', 'email_hidden', 'note', 'note_hidden']
+    fields = ['name', 'occupation', 'occupation_hidden', 'address',
+              'address_hidden', 'email', 'email_hidden', 'note', 'note_hidden']
     var = {'page_title': 'Seznam podpisů', 'rows': []}
     name = request.GET.get('id','')
     off = int(request.GET.get('off', 0))
@@ -374,7 +412,8 @@ def slist(request):
         off = norm(total - 1)
     if total:
         if filt:
-            s = p.signature_set.filter(name__search=(filt + '*')).order_by('timestamp')[off:off+BATCH]
+            s = p.signature_set.filter(name__search=(filt + '*')) \
+                               .order_by('timestamp')[off:off+BATCH]
         else:
             s = p.signature_set.order_by('timestamp')[off:off+BATCH]
         n = off
@@ -391,7 +430,10 @@ def slist(request):
             r['number'] = n
             r['class'] = oe(n)
             var['rows'].append(r)
-        var['nav'] = gennav(off, total, ('/list/?id=%s&amp;filter=%s&amp;off=' % (name, filt)))
+        var['nav'] = gennav(
+            off,
+            total,
+            ('/list/?id=%s&amp;filter=%s&amp;off=' % (name, filt)))
     if name:
         var['url'] = '/%s/' % name
     else:
@@ -407,8 +449,10 @@ def slist(request):
 def signaturedetail(request, id=0):
     u = request.user
     uid = u.id
-    fields = ['id', 'name', 'occupation', 'address', 'email', 'note', 'ip', 'domain']
-    checkboxes = ['occupation_hidden', 'address_hidden', 'birthdate_hidden', 'email_hidden', 'note_hidden', 'reported']
+    fields = ['id', 'name', 'occupation', 'address', 'email', 'note',
+              'ip', 'domain']
+    checkboxes = ['occupation_hidden', 'address_hidden', 'birthdate_hidden',
+                  'email_hidden', 'note_hidden', 'reported']
     var = {'page_title': 'Podrobnosti o podpisu'}
     s = Signature.objects.filter(pk=id)
     if not s:
@@ -467,7 +511,8 @@ def signaturedel(request):
                     if p.user_id != uid and not u.is_superuser:
                         return unauth(request)
                     s.delete()
-        return HttpResponseRedirect('/admin/signaturelist/%s/%s/' % (request.POST.get('petition_id'), request.POST.get('off')))
+        return HttpResponseRedirect('/admin/signaturelist/%s/%s/' % \
+            (request.POST.get('petition_id'), request.POST.get('off')))
     else:
         return error(request)
 
@@ -506,25 +551,44 @@ def pwchange(request):
     return render(request, 'pwchange.html', var)
 
 def robots(request):
-    return render(request, 'robots.txt', content_type='text/plain; charset=utf-8')
+    return render(
+        request,
+        'robots.txt',
+        content_type='text/plain; charset=utf-8')
 
 @never_cache
 def cron(request):
     cursor = connection.cursor()
-    cursor.execute("select email from data_petition where email <> %s and closed = %s group by email", ['', '0'])
+    cursor.execute("select email from data_petition where email <> %s and " \
+                   "closed = %s group by email", ['', '0'])
     emails = cursor.fetchall()
     for e in emails:
         e = e[0]
         petitions = []
         for p in Petition.objects.filter(email=e, closed=False).order_by('pk'):
-            b = {'longname': p.longname, 'total': p.signature_set.count(), 'signatures': []}
+            b = {'longname': p.longname,
+                 'total': p.signature_set.count(),
+                 'signatures': []}
             sign = p.signature_set.filter(reported=False)
             for s in sign:
-                b['signatures'].append({'name': s.name, 'occupation': s.occupation, 'address': s.address, 'note': s.note})
+                b['signatures'].append(
+                    {'name': s.name,
+                     'occupation': s.occupation,
+                     'address': s.address,
+                     'note': s.note})
             petitions.append(b)
         t = get_template('email.tpl')
-        o = t.render(request, Context({'url': ('http://%s/' % URL_BASE), 'time': strftime('%d.%m.%Y %H:%M:%S'), 'petitions': petitions}))
-        if send_mail('Denni zprava aplikace Petice', o, 'Robot <no-reply@pecina.cz>', [e]):
+        o = t.render(
+            request,
+            Context(
+                {'url': ('http://%s/' % URL_BASE),
+                 'time': strftime('%d.%m.%Y %H:%M:%S'),
+                 'petitions': petitions}))
+        if send_mail(
+                'Denni zprava aplikace Petice',
+                o,
+                'Robot <no-reply@pecina.cz>',
+                [e]):
             for p in Petition.objects.filter(email=e):
                 p.signature_set.update(reported=True)
     return HttpResponse('')
@@ -535,15 +599,33 @@ def export(request, id):
     uid = u.id
     var = {'page_title': 'Export seznamu podpisů do souboru', 'id': id, 
            'formats': [
-               {'format': 'csvutf_8', 'desc': 'Soubor CSV (UTF-8)', 'newgroup': False},
-               {'format': 'csvcp1250', 'desc': 'Soubor CSV (CP1250/Windows)', 'newgroup': False},
-               {'format': 'csvcp852', 'desc': 'Soubor CSV (CP852/Latin 2)', 'newgroup': False},
-               {'format': 'csviso8859_2', 'desc': 'Soubor CSV (ISO 8859-2/Latin 2)', 'newgroup': False},
-               {'format': 'csvmac_latin2', 'desc': 'Soubor CSV (Mac CE)', 'newgroup': False},
-               {'format': 'csvascii', 'desc': 'Soubor CSV (ASCII bez diakritiky)', 'newgroup': False},
-               {'format': 'xml', 'desc': 'Soubor XML', 'newgroup': True},
-               {'format': 'yaml', 'desc': 'Soubor YAML', 'newgroup': False},
-               {'format': 'pdf', 'desc': 'Soubor PDF', 'newgroup': False},
+               {'format': 'csvutf_8',
+                'desc': 'Soubor CSV (UTF-8)',
+                'newgroup': False},
+               {'format': 'csvcp1250',
+                'desc': 'Soubor CSV (CP1250/Windows)',
+                'newgroup': False},
+               {'format': 'csvcp852',
+                'desc': 'Soubor CSV (CP852/Latin 2)',
+                'newgroup': False},
+               {'format': 'csviso8859_2',
+                'desc': 'Soubor CSV (ISO 8859-2/Latin 2)',
+                'newgroup': False},
+               {'format': 'csvmac_latin2',
+                'desc': 'Soubor CSV (Mac CE)',
+                'newgroup': False},
+               {'format': 'csvascii',
+                'desc': 'Soubor CSV (ASCII bez diakritiky)',
+                'newgroup': False},
+               {'format': 'xml',
+                'desc': 'Soubor XML',
+                'newgroup': True},
+               {'format': 'yaml',
+                'desc': 'Soubor YAML',
+                'newgroup': False},
+               {'format': 'pdf',
+                'desc': 'Soubor PDF',
+                'newgroup': False},
           ]}
     p = Petition.objects.filter(pk=id)
     if not p:
@@ -575,7 +657,9 @@ def doexport(request, id):
     if format[:3] == 'csv':
         import csv
         from io import StringIO
-        asciitbl=str.maketrans('áäčďéěëíĺľňóôöŕřšťúůüýžÁÄČĎÉĚËÍĹĽŇÓÔÖŔŘŠŤÚŮÜÝŽ','aacdeeeillnooorrstuuuyzAACDEEEILLNOOORRSTUUUYZ')
+        asciitbl=str.maketrans(
+            'áäčďéěëíĺľňóôöŕřšťúůüýžÁÄČĎÉĚËÍĹĽŇÓÔÖŔŘŠŤÚŮÜÝŽ',
+            'aacdeeeillnooorrstuuuyzAACDEEEILLNOOORRSTUUUYZ')
         def rawascii(l):
             return l.translate(asciitbl).encode('ascii', 'replace')
         enc = format[3:]
@@ -588,7 +672,8 @@ def doexport(request, id):
         sio = StringIO()
         writer = csv.writer(sio, delimiter=delimiter)
         if header:
-            hl = ['Jméno a příjmení', 'Adresa', 'Povolání', 'Datum narození', 'E-mail', 'Poznámka', 'Datum a čas podpisu']
+            hl = ['Jméno a příjmení', 'Adresa', 'Povolání', 'Datum narození',
+                  'E-mail', 'Poznámka', 'Datum a čas podpisu']
             writer.writerow(hl)
         for row in s:
             r = {}
@@ -605,7 +690,13 @@ def doexport(request, id):
                 ts = row.timestamp.strftime('%d.%m.%Y %H:%M')
             else:
                 ts = ''
-            w = [row.name, r['address'], r['occupation'], bd, r['email'], r['note'], ts]
+            w = [row.name,
+                 r['address'],
+                 r['occupation'],
+                 bd,
+                 r['email'],
+                 r['note'],
+                 ts]
             writer.writerow(w)
         sio.seek(0)
         u = sio.read()
@@ -616,9 +707,11 @@ def doexport(request, id):
         response.write(b)
         return response
     elif format == 'xml':
-        xd = {'petition': {
-            'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-            'xsi:noNamespaceSchemaLocation': 'http://petice.pecina.cz/static/%s-%s.xsd' % (APP, VERSION),
+        xd = {
+            'petition': {
+                'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+                'xsi:noNamespaceSchemaLocation':
+                'http://petice.pecina.cz/static/%s-%s.xsd' % (APP, VERSION),
                 'application': APP,
                 'version': VERSION,
                 'created': datetime.now().replace(microsecond=0).isoformat()
@@ -637,14 +730,16 @@ def doexport(request, id):
             tag.append(xmlescape(ss.name))
             t.append(tag)
             for f in ['address', 'birthdate', 'occupation', 'email', 'note']:
-                if (showall or not ss.__getattribute__(f + '_hidden')) and ss.__getattribute__(f):
+                if (showall or not ss.__getattribute__(f + '_hidden')) and \
+                   ss.__getattribute__(f):
                     tag = xml.new_tag(f)
                     if f == 'birthdate':
                         tag.append(ss.birthdate.isoformat())
                     else:
                         tag.append(xmlescape(ss.__getattribute__(f)))
                     if showall:
-                        tag['hidden'] = str(ss.__getattribute__(f + '_hidden')).lower()
+                        tag['hidden'] = \
+                            str(ss.__getattribute__(f + '_hidden')).lower()
                     t.append(tag)
             if ss.birthdate and (showall or not ss.birthdate_hidden):
                 tag = xml.new_tag('timestamp')
@@ -671,16 +766,8 @@ def doexport(request, id):
             var['rows'].append(r)
         return render(request, 'export.yml', var, content_type='text/yaml')
     elif format == 'pdf':
-        import reportlab.rl_config
-        from reportlab.pdfbase.pdfmetrics import registerFont, registerFontFamily
-        from reportlab.pdfbase.ttfonts import TTFont
-        from reportlab.platypus import Paragraph, SimpleDocTemplate, LongTable, TableStyle
-        from reportlab.lib.styles import ParagraphStyle
-        from reportlab.lib.enums import TA_CENTER, TA_RIGHT
-        from reportlab.lib.pagesizes import A4
-        from io import BytesIO
-        import os.path
-        fontdir = os.path.join(os.path.dirname(__file__), 'fonts/').replace('\\','/')
+        fontdir = os.path.join(os.path.dirname(__file__), 'fonts/') \
+                         .replace('\\','/')
         def page1(c, d):
             c.saveState()
             c.setFont('Liberation-Sans', 7)
@@ -699,20 +786,68 @@ def doexport(request, id):
                     l[i] = l[i][:limit] + u'…'
             return ' '.join(l)
         reportlab.rl_config.warnOnMissingFontGlyphs = 0
-        registerFont(TTFont('Liberation-Sans', (fontdir + 'LiberationSans-Regular.ttf')))
-        registerFont(TTFont('Liberation-SansB', (fontdir + 'LiberationSans-Bold.ttf')))
-        registerFont(TTFont('Liberation-SansI', (fontdir + 'LiberationSans-Italic.ttf')))
-        registerFont(TTFont('Liberation-SansBI', (fontdir + 'LiberationSans-BoldItalic.ttf')))
-        registerFontFamily('Liberation-Sans', normal='Liberation-Sans', bold='Liberation-SansB', italic='Liberation-SansI', boldItalic='Liberation-SansBI')
-        sh1 = ParagraphStyle(name='Heading1', fontName='Liberation-SansB', fontSize=12, leading=14, spaceAfter=0, alignment=TA_CENTER)
-        sh2 = ParagraphStyle(name='Heading2', fontName='Liberation-SansI', fontSize=8, leading=10, spaceBefore=0, spaceAfter=9, alignment=TA_CENTER)
-        sth = ParagraphStyle(name='TableHeading', fontName='Liberation-SansB', fontSize=5, leading=6, textColor='#ffffff', alignment=TA_CENTER)
-        stcl = ParagraphStyle(name='TableContentsLeft', fontName='Liberation-Sans', fontSize=5, leading=6)
-        stcc = ParagraphStyle(name='TableContentsCenter', fontName='Liberation-Sans', fontSize=5, leading=6, alignment=TA_CENTER)
-        sno = ParagraphStyle(name='Notice', fontName='Liberation-SansI', fontSize=5, leading=6, spaceBefore=9, alignment=TA_RIGHT, rightIndent=-6)
+        registerFont(TTFont(
+            'Liberation-Sans',
+            (fontdir + 'LiberationSans-Regular.ttf')))
+        registerFont(TTFont(
+            'Liberation-SansB',
+            (fontdir + 'LiberationSans-Bold.ttf')))
+        registerFont(TTFont(
+            'Liberation-SansI',
+            (fontdir + 'LiberationSans-Italic.ttf')))
+        registerFont(TTFont(
+            'Liberation-SansBI',
+            (fontdir + 'LiberationSans-BoldItalic.ttf')))
+        registerFontFamily(
+            'Liberation-Sans',
+            normal='Liberation-Sans',
+            bold='Liberation-SansB',
+            italic='Liberation-SansI',
+            boldItalic='Liberation-SansBI')
+        sh1 = ParagraphStyle(
+            name='Heading1',
+            fontName='Liberation-SansB',
+            fontSize=12,
+            leading=14,
+            spaceAfter=0,
+            alignment=TA_CENTER)
+        sh2 = ParagraphStyle(
+            name='Heading2',
+            fontName='Liberation-SansI',
+            fontSize=8,
+            leading=10,
+            spaceBefore=0,
+            spaceAfter=9,
+            alignment=TA_CENTER)
+        sth = ParagraphStyle(
+            name='TableHeading',
+            fontName='Liberation-SansB',
+            fontSize=5, leading=6,
+            textColor='#ffffff',
+            alignment=TA_CENTER)
+        stcl = ParagraphStyle(
+            name='TableContentsLeft',
+            fontName='Liberation-Sans',
+            fontSize=5,
+            leading=6)
+        stcc = ParagraphStyle(
+            name='TableContentsCenter',
+            fontName='Liberation-Sans',
+            fontSize=5,
+            leading=6,
+            alignment=TA_CENTER)
+        sno = ParagraphStyle(
+            name='Notice',
+            fontName='Liberation-SansI',
+            fontSize=5,
+            leading=6,
+            spaceBefore=9,
+            alignment=TA_RIGHT,
+            rightIndent=-6)
         flow = [Paragraph(p.longname, sh1)]
         flow.append(Paragraph(('Počet podpisů: %u' % s.count()), sh2))
-        th = ['Pořadí', 'Datum a čas', 'Jméno a příjmení', 'Povolání', 'Adresa', 'Narozen/a', 'E-mail', 'Poznámka']
+        th = ['Pořadí', 'Datum a čas', 'Jméno a příjmení', 'Povolání',
+              'Adresa', 'Narozen/a', 'E-mail', 'Poznámka']
         data = [[Paragraph(x, sth) for x in th]]
         n = 0
         for row in s:
@@ -737,7 +872,8 @@ def doexport(request, id):
                     Paragraph(sanitize(r['email'].lower(), 30), stcl),
                     Paragraph(sanitize(r['note'], 45), stcl),
                     ])
-        t = LongTable(data, colWidths=[22.15, 46.10, 52.95, 52.95, 76.65, 30.35, 80.50, 120.25], repeatRows=1)
+        t = LongTable(data, colWidths=[22.15, 46.10, 52.95, 52.95, 76.65, 30.35,
+                                       80.50, 120.25], repeatRows=1)
         t.setStyle(TableStyle([
                     ('BACKGROUND', (0,0), (-1,0), '#000000'),
                     ('ROWBACKGROUNDS', (0,1), (-1,-1), ['#FFFFFF', '#F0F0F0']),
@@ -749,7 +885,8 @@ def doexport(request, id):
                     ('BOTTOMPADDING', (0,0), (-1,-1), 2),
                     ]))
         flow.append(t)
-        flow.append(Paragraph(strftime('Vytvořeno: %d.%m.%Y %H:%M:%S', localtime(time())), sno))
+        flow.append(Paragraph(strftime(
+            'Vytvořeno: %d.%m.%Y %H:%M:%S', localtime(time())), sno))
         temp = BytesIO()
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'inline; filename=export.pdf'

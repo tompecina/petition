@@ -6,7 +6,7 @@ PETICE.PECINA.CZ
 
 
 PETICE.PECINA.CZ je systém internetových petic v Pythonu/Djangu. Jedná se
-již o starší systém, který je udržován pouze v omezené míře.
+o již starší systém, který je udržován pouze v omezené míře.
 
 Pro instalaci musíte vytvořit soubor common/secrets.py, obsahujcí tyto dva
 řádky:
