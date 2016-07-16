@@ -18,6 +18,6 @@ Rovněž budete pravděpodobně muset upravit soubor petition/wsgi.py, jehož ob
 je závislý na konkrétních podmínkách instalace na vašem serveru, případně
 změnit nastavení v souboru petition/settings.py.
 
-Živá instalace aplikace je k disposici na adrese <https://petition.pecina.cz/>.
+Živá instalace aplikace je k disposici na adrese <https://petice.pecina.cz/>.
 Máte-li zájem o zřízení účtu na tomto serveru, napište si o něj autorovi na
 adresu Tomáš Pecina <tomas@pecina.cz>.
