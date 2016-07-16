@@ -73,7 +73,7 @@ urlpatterns = [
         name='logout'),
     url(r'robots.txt$',
         robots),
-    url(r'^admin/cron-fb3316fef6d425dce6f23821fa027b74/$',
+    url(r'^admin/cron/$',
         cron),
     url(r'^admin/login/$',
         login,
