@@ -18,6 +18,9 @@ Rovněž budete pravděpodobně muset upravit soubor petition/wsgi.py, jehož ob
 je závislý na konkrétních podmínkách instalace na vašem serveru, případně
 změnit nastavení v souboru petition/settings.py.
 
+Pro denní posílání notifikačních e-mailů je nutné zavolat jednou denně
+/admin/cron/; na serveru by přístup na tuto adresu měl být omezen na localhost.
+
 Živá instalace aplikace je k disposici na adrese <https://petice.pecina.cz/>.
 Máte-li zájem o zřízení účtu na tomto serveru, napište si o něj autorovi na
 adresu Tomáš Pecina <tomas@pecina.cz>.
